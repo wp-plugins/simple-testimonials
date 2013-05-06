@@ -40,5 +40,8 @@ Now, to start using it, just:
 
 == Changelog ==
 
-= 1.0 =
+= 0.0.1 =
 * Plugin first released! I would very much appreciate it if you remembered to rate the plugin after trying it.
+
+= 0.0.2 =
+* Excluded individual testimonials from search results, as they are not intended to be stand-alone pages.

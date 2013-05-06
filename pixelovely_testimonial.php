@@ -4,7 +4,7 @@
 	Plugin URI: http://www.pixelovely.com/resources/simple-testimonials-wordpress-plugin/
 	Description: Easily manage testimonials and display them anywhere on your blog in seconds, via widgets and shortcodes. Instructions are baked right in -- couldn't be simpler!
 	Author: PIXELovely
-	Version: 0.0.1
+	Version: 0.0.2
 	Author URI: http://www.PIXELovely.com/
  */
 
@@ -44,7 +44,8 @@ function pixelovely_testimonials_create_post_type() {
 		'public' => true,
 		'has_archive' => false,
 		'register_meta_box_cb' => 'add_testimonial_pages_metaboxes',
-		'supports' => array('')
+		'supports' => array(''),
+		'exclude_from_search' => true
 		)
 	);
 }
