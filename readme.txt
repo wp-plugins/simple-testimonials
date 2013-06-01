@@ -4,15 +4,13 @@ Donate link: http://pixelovely.com/donate
 Tags: testimonials, random testimonials, random quote, random testimonial
 Requires at least: 3.0.1
 Tested up to: 3.5.1
-Stable tag: 4.3
+Stable tag: 4.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Easily manage testimonials and display them anywhere on your blog in seconds, via widgets and shortcodes. Instructions are baked right in -- couldn't be simpler!
+Easily manage testimonials and display them anywhere on your blog in seconds, via widgets and shortcodes. Instructions are baked right in!
 
 == Description ==
-
-Easily manage testimonials and display them anywhere on your blog in seconds, via widgets and shortcodes. Instructions are baked right in -- couldn't be simpler!
 
 I created this plugin to make it easy peasy for my clients to manage all the nice things that _their_ customers and clients said about them. They've loved it so much, I've decided to make it available to the world.
 
@@ -40,8 +38,11 @@ Now, to start using it, just:
 
 == Changelog ==
 
-= 0.0.1 =
-* Plugin first released! I would very much appreciate it if you remembered to rate the plugin after trying it.
+= 0.0.3 =
+* Fixed an error in the shortcodes that could cause testimonials to appear in unexpected places in layouts with lots of floats.
 
 = 0.0.2 =
 * Excluded individual testimonials from search results, as they are not intended to be stand-alone pages.
+
+= 0.0.1 =
+* Plugin first released! I would very much appreciate it if you remembered to rate the plugin after trying it.

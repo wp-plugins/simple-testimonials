@@ -4,7 +4,7 @@
 	Plugin URI: http://www.pixelovely.com/resources/simple-testimonials-wordpress-plugin/
 	Description: Easily manage testimonials and display them anywhere on your blog in seconds, via widgets and shortcodes. Instructions are baked right in -- couldn't be simpler!
 	Author: PIXELovely
-	Version: 0.0.2
+	Version: 0.0.3
 	Author URI: http://www.PIXELovely.com/
  */
 
@@ -185,21 +185,27 @@ function printPIXELovelyTestimonialPostMeta($optionsForPIXELovelyTestimonials) {
 			</table>
 <?php }
 
-function displayRandomPIXELovelyTestimonials($numberOfQuotes = 1, $limit = "0") {
+function createHTMLforPIXELovelyTestimonials($numberOfQuotes = 1, $limit = "0") {
 	if ($numberOfQuotes == 0) {
 		$numberOfQuotes = -1;
 	}
 	$args = array( 'numberposts' => $numberOfQuotes, 'orderby' => 'rand', 'post_type' =>'testimonials');
 	$rand_posts = get_posts( $args );
 	
+	$testimonials = "";
 	foreach ($rand_posts as $post ) {
 		setup_postdata($post);
-		echo "<div class='pixelovely_testimonial'><p>".nl2br(get_post_meta($post->ID, '_quote', true))."</p>";
+		$testimonials .= "<div class='pixelovely_testimonial'><p>".nl2br(get_post_meta($post->ID, '_quote', true))."</p>";
 		$attribution = trim(get_post_meta($post->ID, 'post_title', true));
 		if (!empty($attribution)) {
-			echo "<span class='pixelovely_testimonial_attribution'>- $attribution</span></div>";
+			$testimonials .= "<span class='pixelovely_testimonial_attribution'>- $attribution</span></div>";
 		}
 	}
+	return $testimonials;
+}
+
+function displayRandomPIXELovelyTestimonials($numberOfQuotes = 1, $limit = "0") {
+	echo createHTMLforPIXELovelyTestimonials($numberOfQuotes, $limit);
 }
 
 
@@ -295,7 +301,7 @@ function create_pixelovely_testimonial_shortcode($atts){
 	if (!determineIfValidNumberOfPIXELovelyTestimonials($number)) {
 		$number = 1;
 	}
-	displayRandomPIXELovelyTestimonials($number);
+	return createHTMLforPIXELovelyTestimonials($number);
 }
 
 function determineIfValidNumberOfPIXELovelyTestimonials($number) {
