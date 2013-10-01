@@ -46,7 +46,7 @@ class pixelovely_testimonial_manual_page{
 	    <h2>How to Use This Testimonial Plugin</h2>
 	    <div class='aside'>
 	    <?php
-echo '<img src="' .plugins_url( 'PIXELovely-testimonials/images/headshot2.png' , dirname(__FILE__) ). '" class="hello"> ';
+echo '<img src="' .plugins_url( 'simple-testimonials/images/headshot2.png' , dirname(__FILE__) ). '" class="hello"> ';
 ?>
 		    <p>Hi! I'm Kim, lead programmer and project manager at <a href='http://www.pixelovely.com'>PIXELovely</a>. I created this plugin to make it easy peasy for my clients to manage all the nice things that <em>their</em> customers and clients said about them. They've loved it so much, I've decided to make it available to the world.</p>
 		    <p>This plugin is perfect for you if:</p>
@@ -66,7 +66,10 @@ echo '<img src="' .plugins_url( 'PIXELovely-testimonials/images/headshot2.png' ,
 	   	
 	   	<h3>In Sidebars or Other Widgetized Areas</h3>
 	   	<p>If you are using a "<a href='http://codex.wordpress.org/Widgetizing_Themes'>widgetized</a>" theme - that is, one that allows you to drag widgets to a sidebar, footer, or other location - you can display any number of testimonials in the sidebar.</p>
-	   	<p>Just find the widget named "Random Testimonial," and drag it to your widget area of choice. By default, this widget will show one testimonial. You may open its panel and select another number from the dropdown. Remember to save!</p>
+	   	<p>Just find the widget named "Random Testimonial," and drag it to your widget area of choice. By default, this widget will show one testimonial. You may open its panel and select another number from the dropdown.</p>
+	   	<p>When using a widget, you may also enter a number of characters to limit how much of a testimonial to display. This will prevent extra-long testimonials from breaking your beautiful site design.</p>
+	   	<p>Want to give people a link to view the rest of a shortened testimonial, or just to see more of the nice things people have said about you? Just paste the URL to your testimonial page into the last slot on the widget, labeled "Add a read more link". A "read more" link will automatically appear at the bottom of the widget.</p>
+	   	<p>Remember to save!</p>
 	   	
 	   	<h3>In the Body of Pages and Posts</h3>
 	   	<p>To add a testimonial anywhere at all, simply place this shortcode into a page or post: <strong>[testimonial]</strong></p>
@@ -75,7 +78,7 @@ echo '<img src="' .plugins_url( 'PIXELovely-testimonials/images/headshot2.png' ,
 	   	
 	   	<h3>Creating a Testimonial Page</h3>
 	   	<p>To create a page where all of your testimonials display at once, simply use the above shortcode, with the number set to 0. This will cause all of your testimonials to display at once.</p>
-	   	
+	   		   	
 	   	<h2>For Advanced Users: Styling Your Testimonials</h2>
 	   	<p>This plugin deliberately employs extremely minimal default styling, to make it fit in with any theme.</p>
 	   	<p>If you are an advanced user and wish to apply your own CSS styles to the testimonials this plugin outputs, the plugin follows this structure:</p>
@@ -88,11 +91,9 @@ echo '<img src="' .plugins_url( 'PIXELovely-testimonials/images/headshot2.png' ,
 	   	   			</ul>
 	   	   		</li>
 	   	   		<li>&lt;/div&gt;</li>
-	   	   			
-	   	   	
-	   	   	</ul>
-	   	   	
-	   	<p>Apply your CSS to div.pixelovely_testimonial and span.pixelovely_testimonial_attribution</p>
+	   	   		<li>&lt;span class='pixelovely_readmore'&gt;&lt;a href='http://www.yourlinkhere.com/'&gt;Read more&lt;/a&gt;&lt;span&gt;</li>
+	   	   	</ul>	   	   	
+	   	<p>Apply your CSS to div.pixelovely_testimonial, span.pixelovely_testimonial_attribution and span.pixelovely_readmore</p>
 	   	</div>
 	</div>
 	<?php

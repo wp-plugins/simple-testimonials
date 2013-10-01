@@ -3,8 +3,8 @@ Contributors: PIXELovely
 Donate link: http://pixelovely.com/donate
 Tags: testimonials, random testimonials, random quote, random testimonial
 Requires at least: 3.0.1
-Tested up to: 3.5.1
-Stable tag: 4.4
+Tested up to: 3.6.1
+Stable tag: 4.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,14 @@ Now, to start using it, just:
 1. If you forgot how to use the testimonial plugin at any time, I've placed a 1 page user manual directly into the testimonial section of your admin area. You're welcome! :)
 
 == Changelog ==
+
+= 0.0.4 =
+* Added an optional character limit to testimonials outputted with a widget
+* Added an optional "read more" link to the testimonial widget
+* Made some changes to try to prevent SEO plugins from appearing on the testimonial composition page, as testimonials are not themselves intended to be stand-alone pages.
+* Fixed broken image in the manual
+* Updated manual to reflect new options
+* Gave the testimonials section a custom icon in the admin backend
 
 = 0.0.3 =
 * Fixed an error in the shortcodes that could cause testimonials to appear in unexpected places in layouts with lots of floats.

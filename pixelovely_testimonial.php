@@ -41,7 +41,8 @@ function pixelovely_testimonials_create_post_type() {
 				'singular_name' => __( 'Testimonial' ),
 				'all_items' => __( 'All Testimonials' )
 			),
-		'public' => true,
+		'public' => false,
+		'show_ui' => true,
 		'has_archive' => false,
 		'register_meta_box_cb' => 'add_testimonial_pages_metaboxes',
 		'supports' => array(''),
@@ -132,7 +133,6 @@ function printPIXELovelyTestimonialPostMeta($optionsForPIXELovelyTestimonials) {
 	// Noncename needed to verify where the data originated
 	echo '<input type="hidden" name="eventmeta_noncename" id="eventmeta_noncename" value="' .
 			wp_create_nonce( plugin_basename(__FILE__) ) . '" />';
-		
 			echo "<table>";
 			foreach ($optionsForPIXELovelyTestimonials as $option) {
 				echo "<tr>";
@@ -195,7 +195,18 @@ function createHTMLforPIXELovelyTestimonials($numberOfQuotes = 1, $limit = "0") 
 	$testimonials = "";
 	foreach ($rand_posts as $post ) {
 		setup_postdata($post);
-		$testimonials .= "<div class='pixelovely_testimonial'><p>".nl2br(get_post_meta($post->ID, '_quote', true))."</p>";
+		
+		if ($limit == 0) {
+			$quote = nl2br(get_post_meta($post->ID, '_quote', true));
+		} else {
+			$quote = nl2br(substr(get_post_meta($post->ID, '_quote', true), 0, $limit));
+		}
+		
+		if (strlen($quote) < strlen(nl2br(get_post_meta($post->ID, '_quote', true)))) {
+			$quote .= "...";
+		}
+		
+		$testimonials .= "<div class='pixelovely_testimonial'><p>$quote</p>";
 		$attribution = trim(get_post_meta($post->ID, 'post_title', true));
 		if (!empty($attribution)) {
 			$testimonials .= "<span class='pixelovely_testimonial_attribution'>- $attribution</span></div>";
@@ -235,6 +246,17 @@ class PIXELovely_Testimonials_Widget extends WP_Widget {
 			$num_display = __( '', 'text_domain' );
 		}
 		
+		if (isset($instance['length'])) {
+			$length = $instance['length'];
+		} else {
+			$length = 0;
+		}
+		
+		if (isset($instance['readmore'])) {
+			$readmore = $instance['readmore'];
+		} else {
+			$readmore = "";
+		}
 		?>
 		<p>
 			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label>
@@ -254,6 +276,18 @@ class PIXELovely_Testimonials_Widget extends WP_Widget {
 			</select>
 		</p>
 		
+		<p>
+			<label for="<?php echo $this->get_field_id( 'length' ); ?>"><?php _e( 'Limit to this many characters:' ); ?></label>
+			<input class="widefat" id="<?php echo $this->get_field_id( 'length' ); ?>" name="<?php echo $this->get_field_name( 'length' ); ?>" type="text" value="<?php echo esc_attr( $length ); ?>" />
+			Leave blank or use zero for no limit.
+		</p>
+		
+		<p>
+			<label for="<?php echo $this->get_field_id( 'readmore' ); ?>"><?php _e( 'Optionally, add a "read more" link:' ); ?></label>
+			<input class="widefat" id="<?php echo $this->get_field_id( 'readmore' ); ?>" name="<?php echo $this->get_field_name( 'readmore' ); ?>" type="text" value="<?php echo esc_attr( $readmore ); ?>" />
+			Entering a URL in this field will create a "read more" link. Typically, it will go to your page of all your testimonials.
+		</p>
+		
 		<?php
 	}
 
@@ -262,6 +296,14 @@ class PIXELovely_Testimonials_Widget extends WP_Widget {
 		$instance = array();
 		$instance['title'] = strip_tags( $new_instance['title'] );
 		$instance['num_display'] = strip_tags( $new_instance['num_display'] );
+		$instance['length'] = strip_tags( $new_instance['length'] );
+		if (is_numeric($instance['length'])) {
+			$instance['length'] = intval($instance['length']);
+		} else {
+			$instance['length'] = 0;
+		}		
+		$instance['readmore'] = strip_tags( $new_instance['readmore'] );
+		
 		return $instance;
 	}
 	
@@ -270,6 +312,18 @@ class PIXELovely_Testimonials_Widget extends WP_Widget {
 		extract( $args );
 		$title = apply_filters( 'widget_title', $instance['title'] );
 		$num_display = apply_filters( 'widget_title', $instance['num_display'] );
+		
+		if (isset($instance['length'])) {
+			$length = $instance['length'];
+		} else {
+			$length = 0;
+		}
+		
+		if (isset($instance['readmore'])) {
+			$readmore = $instance['readmore'];
+		} else {
+			$readmore = "";
+		}
 
 		if (!determineIfValidNumberOfPIXELovelyTestimonials($num_display)) {
 			$num_display = 1;
@@ -280,8 +334,11 @@ class PIXELovely_Testimonials_Widget extends WP_Widget {
 			
 			
 			//Output all special widget stuff here
-			displayRandomPIXELovelyTestimonials($num_display);
+			displayRandomPIXELovelyTestimonials($num_display, $length);
 			
+			if (strlen($readmore) > 2) {
+				echo "<span class='readmore'><a href='$readmore'>Read more</a></a>";	
+			}
 			
 			echo $after_widget;
 			
@@ -315,5 +372,14 @@ function determineIfValidNumberOfPIXELovelyTestimonials($number) {
 
 add_action( 'widgets_init', 'custom_testi_register' );
 add_shortcode('testimonial','create_pixelovely_testimonial_shortcode');
+
+
+wp_register_style( 'custom_simpletestimonial_admin_css', plugins_url( 'simple-testimonials/simple-testimonials-admin-style.css' , dirname(__FILE__) ), false, '1.0.0' );
+
+function load_simpletestimonial_admin_scripts() {
+     wp_enqueue_style( 'custom_simpletestimonial_admin_css' );
+}
+ 
+add_action('admin_enqueue_scripts', 'load_simpletestimonial_admin_scripts');
 
 ?>
