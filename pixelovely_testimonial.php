@@ -4,7 +4,7 @@
 	Plugin URI: http://www.pixelovely.com/resources/simple-testimonials-wordpress-plugin/
 	Description: Easily manage testimonials and display them anywhere on your blog in seconds, via widgets and shortcodes. Instructions are baked right in -- couldn't be simpler!
 	Author: PIXELovely
-	Version: 0.0.5
+	Version: 0.0.6
 	Author URI: http://www.PIXELovely.com/
  */
 
@@ -43,44 +43,115 @@ function pixelovely_testimonials_create_post_type() {
 			),
 		'public' => false,
 		'show_ui' => true,
+		'show_in_menu'=>true,
 		'has_archive' => false,
-		'register_meta_box_cb' => 'add_testimonial_pages_metaboxes',
 		'supports' => array(''),
-		'exclude_from_search' => true
+		'exclude_from_search' => true,
+		'menu_icon' => 'dashicons-testimonial'
 		)
 	);
 }
 add_action( 'init', 'pixelovely_testimonials_create_post_type' );
 
-function add_testimonial_pages_metaboxes() {
-	add_meta_box('pixelovely_testimonialSettings', 'Testimonial', 'pixelovely_testimonial_settings', 'testimonials', 'normal', 'high');
-}
 
-$optionsForPIXELovelyTestimonials = array(
-		array(
-			'name' => 'Testimonial',
-			'type' => 'textarea',
-			'optionname' => 'quote'
-		),
-		array(
-		 	'name' => 'Attribution',
-		 	'type' => 'text',
-		 	'optionname' => 'post_title',
-			'description' => 'A name, initials, title, nickname or other handle to identify who is being quoted.')
+
+/* Special inputs for post type */
+add_action('edit_form_after_title', 'add_special_simple_testimonials_page_editor');
+
+$PIXELovely_simpletestimonials_inputs = array(
+	array(
+		"type"=>"textarea",
+		"name"=>"Testimonial",
+		"optionname"=>"_quote"
+	),
+	array(
+		"type"=>"text",
+		"name"=>"Attribution",
+		"optionname"=>"post_title"
+	)
 );
 
-function pixelovely_testimonial_settings() {
-	global $optionsForPIXELovelyTestimonials;
-	printPIXELovelyTestimonialPostMeta($optionsForPIXELovelyTestimonials);
-	echo "<div style='clear: left'></div>";
+function add_special_simple_testimonials_page_editor() {
+	global $post;
+	
+	//Get the appropriate set of inputs for the post type
+	if ( get_post_type($post->ID) == "testimonials") {
+		global $PIXELovely_simpletestimonials_inputs;
+		$loopthrough = $PIXELovely_simpletestimonials_inputs;
+	}
+	
+	if (isset($loopthrough) && is_array($loopthrough)) {
+	
+	// Noncename needed to verify where the data originated
+	echo '<input type="hidden" name="pix_simple_testimonial_pagemeta_noncename" id="pix_simple_testimonial_pagemeta_noncename" value="' .
+			wp_create_nonce( plugin_basename(__FILE__) ) . '" />';
+
+	// Get the meta data if its already been entered			
+
+	$i = 0;
+	
+	?>
+	
+	<?php 
+	echo "<table style='width: 100%;'>";
+	foreach ($loopthrough as $option) {
+		$currentValue = get_post_meta ($post->ID, $option['optionname'], true);
+		echo "<tr>";
+		
+			echo "<td style='width: 10%; vertical-align: top; font-weight: bold; text-align: right; padding-right: 10px;'>";
+			echo "<label for='".$option['optionname']."'>".$option['name']."</label>";
+			echo "</td><td style='width: 90%'>";
+		
+		
+		switch ($option['type']) {
+			case "instructions":
+				echo "<p>".$option['name']."</p>";
+				break;
+			case "text":
+				echo "<input type='text' name='".$option['optionname']."' id='".$option['optionname']."' value='".htmlspecialchars($currentValue, ENT_QUOTES)."'>";
+				break;
+			case "textarea":
+				echo "<textarea name='".$option['optionname']."' id='".$option['optionname']."' style='width: 95%; height: 150px;'>".htmlspecialchars($currentValue)."</textarea>";
+				break;
+			case "checkbox":
+				 	echo "<input type='checkbox' name='".$option['optionname']."' id='".$option['optionname']."' value='1'";
+				 	if ($currentValue == 1) {
+				 		echo " checked";
+				 	}
+				 	echo "></p>";
+				break;
+		}
+		if (isset($option['description']) && $option['description'] != "") {
+						echo "<p style='clear: both; font-size: .9em; font-style: italic; margin: 0px;'>".$option['description']."</p>";
+					}
+		echo "<br />";
+		echo "</td></tr>";
+		$i++;
+	}
+	echo "</table>";
+	?>
+	
+	<div style='clear: left'></div>
+
+
+<?php
+	}
 }
 
-function pixelovely_save_testimonial_page_meta($post_id, $post) {
-	global $optionsForPIXELovelyTestimonials;
+function save_special_pix_simple_testimonial_stuff($post_id, $post) {
+	
+	//Get the appropriate set of inputs for the post type
+	if ( get_post_type($post->ID) == "testimonials") {
+		global $PIXELovely_simpletestimonials_inputs;
+		$loopthrough = $PIXELovely_simpletestimonials_inputs;
+	}
+	
+	if (isset($loopthrough) && is_array($loopthrough)) {
+	
 	// verify this came from the our screen and with proper authorization,
 	// because save_post can be triggered at other times
-	if ( !wp_verify_nonce( $_POST['eventmeta_noncename'], plugin_basename(__FILE__) )) {
-	return $post->ID;
+	if ( !wp_verify_nonce( $_POST['pix_simple_testimonial_pagemeta_noncename'], plugin_basename(__FILE__) )) {
+		return $post->ID;
 	}
 	
 	// Is the user allowed to edit the post or page?
@@ -91,99 +162,42 @@ function pixelovely_save_testimonial_page_meta($post_id, $post) {
 	// We'll put it into an array to make it easier to loop though.
 	
 	
-	foreach ($optionsForPIXELovelyTestimonials as $option) {
-		$optionName = "_".$option['optionname'];
+	foreach ($loopthrough as $option) {
+		$currentValue = trim(stripslashes( $_POST[$option['optionname']]));	
 		switch ($option['type']) {
-		   case "text":
-		   		if ($option['optionname'] == 'post_title') {
-					$optionName = $option['optionname'];   			
-		   		}
-				$input[$optionName] = wp_filter_post_kses( $_POST[$optionName] );
+			case "text":
+				$portfolio_meta[$option['optionname']] = $currentValue;
 				break;
 			case "textarea":
-				$input[$optionName] = wp_filter_post_kses( $_POST[$optionName] );
-			break;
+				$portfolio_meta[$option['optionname']] = $currentValue;
+				break;
 			case "checkbox":
-				$input[$optionName] = $_POST[$optionName];
-				if ($input[$optionName] != 1) {
-					$input[$optionName] = 0;
+				if ($currentValue != 1) {
+					$currentValue =0;
 				}
-			break;
+				$portfolio_meta[$option['optionname']] = $currentValue;
+				break;
 		}
 	}
+	
 	// Add values of $events_meta as custom fields
 	
-	foreach ($input as $key => $value) { // Cycle through the $events_meta array!
-		if( $post->post_type == 'revision' ) return; // Don't store custom data twice
-		$value = implode(',', (array)$value); // If $value is an array, make it a CSV (unlikely)
-		if(get_post_meta($post->ID, $key, FALSE)) { // If the custom field already has a value
-			update_post_meta($post->ID, $key, $value);
-		} else { // If the custom field doesn't have a value
-			add_post_meta($post->ID, $key, $value);
-		}
-		if(!$value) delete_post_meta($post->ID, $key); // Delete if blank
+	foreach ($portfolio_meta as $key => $value) { // Cycle through the $portfolio_meta array!
+	if( $post->post_type == 'revision' ) return; // Don't store custom data twice
+	$value = implode(',', (array)$value); // If $value is an array, make it a CSV (unlikely)
+	if(get_post_meta($post->ID, $key, FALSE)) { // If the custom field already has a value
+	update_post_meta($post->ID, $key, $value);
+	} else { // If the custom field doesn't have a value
+	add_post_meta($post->ID, $key, $value);
 	}
-
+	if(!$value) delete_post_meta($post->ID, $key); // Delete if blank
+	}
+	}
 }
-add_action('save_post', 'pixelovely_save_testimonial_page_meta', 1, 2); // save the custom fields
 
-function printPIXELovelyTestimonialPostMeta($optionsForPIXELovelyTestimonials) {
-	global $post;
+add_action('save_post', 'save_special_pix_simple_testimonial_stuff', 1, 2); // save the custom fields
 
-	// Noncename needed to verify where the data originated
-	echo '<input type="hidden" name="eventmeta_noncename" id="eventmeta_noncename" value="' .
-			wp_create_nonce( plugin_basename(__FILE__) ) . '" />';
-			echo "<table>";
-			foreach ($optionsForPIXELovelyTestimonials as $option) {
-				echo "<tr>";
-				if ($option['type'] == "header") {
-					echo "<td colspan='2' style='border-bottom: 1px solid #000;'><h1 style='margin-top: 25px;'>".$option['name']."</h1></td>";
-				}elseif ($option['type'] == "subheader") {
-					echo "<td colspan='2'><h2 style='font-size: 1.5em; color:#21759B;'>".$option['name']."</h2></td>";
-				} else {
-					echo "<td style='width: 125px; text-align: right; font-weight: bold; padding-right: 15px;'>".$option['name']."</td>";
-					echo "<td>";
 
-					//Get the current value of this setting
-					$optionname = '_'.$option['optionname'];
-					$currentValue = get_post_meta($post->ID, $optionname, true);					
-					
-					switch ($option['type']) {
-					    case "text":
-					    	if ($option['optionname'] == 'post_title') {
-					    		$currentValue = get_post_meta($post->ID, $option['optionname'], true);
-					    		echo "<input type='text' name='".$option['optionname']."' style='width: 500px;' value='".htmlspecialchars($currentValue)."'>";
-					    	} else {
-					       		echo "<input type='text' name='_".$option['optionname']."' style='width: 500px;' value='".htmlspecialchars($currentValue)."'>";
-					    	}
-					        break;
-					    case "textarea":
-					        echo "<textarea name='_".$option['optionname']."' style='width: 500px; height: 200px'>".htmlspecialchars($currentValue)."</textarea>";
-					        break;
-					    case "checkbox":
-					        echo "<input type='checkbox' value='1' name='_".$option['optionname']."'";
-					        
-					        if ($currentValue == 1) {
-					        	echo " checked";
-					        }
-					        echo ">";
-					        break;
-					}
-				
-					if (isset($option['description']) && $option['description'] != "") {
-						echo "<p style='clear: both; font-size: .9em; font-style: italic;'>".$option['description']."</p>";
-					}
-					echo "</td>";
-				}
-				
-				
-				echo "</tr>";
-			}
-			?>	
-			
-			
-			</table>
-<?php }
 
 function createHTMLforPIXELovelyTestimonials($numberOfQuotes = 1, $limit = "0") {
 	if ($numberOfQuotes == 0) {
@@ -374,14 +388,5 @@ function determineIfValidNumberOfPIXELovelyTestimonials($number) {
 
 add_action( 'widgets_init', 'custom_testi_register' );
 add_shortcode('testimonial','create_pixelovely_testimonial_shortcode');
-
-
-wp_register_style( 'custom_simpletestimonial_admin_css', plugins_url( 'simple-testimonials/simple-testimonials-admin-style.css' , dirname(__FILE__) ), false, '1.0.0' );
-
-function load_simpletestimonial_admin_scripts() {
-     wp_enqueue_style( 'custom_simpletestimonial_admin_css' );
-}
- 
-add_action('admin_enqueue_scripts', 'load_simpletestimonial_admin_scripts');
 
 ?>

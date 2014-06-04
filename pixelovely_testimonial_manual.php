@@ -39,6 +39,8 @@ class pixelovely_testimonial_manual_page{
 		.pixelovely_manual .aside ul {list-style-type: disc;}
 		.pixelovely_manual h2 {padding-top: 20px;}
 		
+		.pixelovely_manual p {font-size: 16px;}
+		
 		.aside img.hello {float: right;padding: 15px;}
         </style>
 	<div class="wrap pixelovely_manual">

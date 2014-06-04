@@ -3,8 +3,8 @@ Contributors: PIXELovely
 Donate link: http://pixelovely.com/donate
 Tags: testimonials, random testimonials, random quote, random testimonial
 Requires at least: 3.0.1
-Tested up to: 3.6.1
-Stable tag: 4.6
+Tested up to: 3.9.1
+Stable tag: 4.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,10 @@ Now, to start using it, just:
 1. If you forgot how to use the testimonial plugin at any time, I've placed a 1 page user manual directly into the testimonial section of your admin area. You're welcome! :)
 
 == Changelog ==
+
+= 0.0.6 =
+* Changing interface from meta inputs to be their own inputs. This prevents the meta info from plugins from appearing above the main post-type inputs, such as SEO plugins.
+* Updating admin icon to utilize new icon-fonts
 
 = 0.0.5 =
 * Minor fix to div structures when an attribution is not supplied.
