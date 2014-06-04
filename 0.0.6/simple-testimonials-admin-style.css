@@ -1,0 +1,8 @@
+@CHARSET "ISO-8859-1";
+
+#adminmenu #menu-posts-testimonials div.wp-menu-image {
+	background-image: url(images/custom-admin-menu.png);
+	background-position: 8px -25px;
+}
+
+#adminmenu #menu-posts-testimonials:hover div.wp-menu-image {background-position: 8px 7px;}
