@@ -4,7 +4,7 @@ Donate link: http://pixelovely.com/donate
 Tags: testimonials, random testimonials, random quote, random testimonial
 Requires at least: 3.0.1
 Tested up to: 4.2.4
-Stable tag: 4.9
+Stable tag: 5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,9 @@ Now, to start using it, just:
 1. If you forgot how to use the testimonial plugin at any time, I've placed a 1 page user manual directly into the testimonial section of your admin area. You're welcome! :)
 
 == Changelog ==
+
+= 0.0.9 =
+* Re-uploading files from 0.0.8
 
 = 0.0.8 =
 * Updating to reflect that the plugin works in 4.2
