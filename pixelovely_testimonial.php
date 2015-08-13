@@ -6,6 +6,7 @@
 	Author: PIXELovely
 	Version: 0.0.7
 	Author URI: http://www.PIXELovely.com/
+	Text Domain: pixelovely-simple-testimonials
  */
 
 /*  Copyright 2013  Kimberly Genly (email : kim@pixelovely.com)
@@ -37,9 +38,9 @@ function pixelovely_testimonials_create_post_type() {
 	register_post_type( 'testimonials',
 		array(
 			'labels' => array(
-				'name' => __( 'Testimonials' ),
-				'singular_name' => __( 'Testimonial' ),
-				'all_items' => __( 'All Testimonials' )
+				'name' => __( 'Testimonials', 'pixelovely-simple-testimonials' ),
+				'singular_name' => __( 'Testimonial', 'pixelovely-simple-testimonials' ),
+				'all_items' => __( 'All Testimonials', 'pixelovely-simple-testimonials' )
 			),
 		'public' => false,
 		'show_ui' => true,
@@ -61,12 +62,12 @@ add_action('edit_form_after_title', 'add_special_simple_testimonials_page_editor
 $PIXELovely_simpletestimonials_inputs = array(
 	array(
 		"type"=>"textarea",
-		"name"=>"Testimonial",
+		"name"=>__( 'Testimonial', 'pixelovely-simple-testimonials' ),
 		"optionname"=>"_quote"
 	),
 	array(
 		"type"=>"text",
-		"name"=>"Attribution",
+		"name"=>__( 'Attribution', 'pixelovely-simple-testimonials' ),
 		"optionname"=>"post_title"
 	)
 );
@@ -243,23 +244,23 @@ class PIXELovely_Testimonials_Widget extends WP_Widget {
 		parent::__construct(
 				'pix_testimonials_widget', // Base ID
 				'Testimonial', // Name
-				array( 'description' => __( 'Display one or more random testimonials', 'text_domain' ), ) // Args
+				array( 'description' => __( 'Display one or more random testimonials', 'pixelovely-simple-testimonials' ), ) // Args
 		);
 	}
-
+	
 	public function form( $instance ) {
 		// outputs the options form on admin
 		if ( isset( $instance[ 'title' ] ) ) {
 			$title = $instance[ 'title' ];
 		}
 		else {
-			$title = __( '', 'text_domain' );
+			$title = __( '', 'pixelovely-simple-testimonials' );
 		}
 		if ( isset( $instance[ 'num_display' ] ) ) {
 			$num_display = $instance[ 'num_display' ];
 		}
 		else {
-			$num_display = __( '', 'text_domain' );
+			$num_display = __( '', 'pixelovely-simple-testimonials' );
 		}
 		
 		if (isset($instance['length'])) {
@@ -293,15 +294,15 @@ class PIXELovely_Testimonials_Widget extends WP_Widget {
 		</p>
 		
 		<p>
-			<label for="<?php echo $this->get_field_id( 'length' ); ?>"><?php _e( 'Limit to this many characters:' ); ?></label>
+			<label for="<?php echo $this->get_field_id( 'length' ); ?>"><?php _e( 'Limit to this many characters:', 'pixelovely-simple-testimonials' ); ?></label>
 			<input class="widefat" id="<?php echo $this->get_field_id( 'length' ); ?>" name="<?php echo $this->get_field_name( 'length' ); ?>" type="text" value="<?php echo esc_attr( $length ); ?>" />
 			Leave blank or use zero for no limit.
 		</p>
 		
 		<p>
-			<label for="<?php echo $this->get_field_id( 'readmore' ); ?>"><?php _e( 'Optionally, add a "read more" link:' ); ?></label>
+			<label for="<?php echo $this->get_field_id( 'readmore' ); ?>"><?php _e( 'Optionally, add a "read more" link:', 'pixelovely-simple-testimonials' ); ?></label>
 			<input class="widefat" id="<?php echo $this->get_field_id( 'readmore' ); ?>" name="<?php echo $this->get_field_name( 'readmore' ); ?>" type="text" value="<?php echo esc_attr( $readmore ); ?>" />
-			Entering a URL in this field will create a "read more" link. Typically, it will go to your page of all your testimonials.
+			<?php _e( 'Entering a URL in this field will create a "read more" link. Typically, it will go to your page of all your testimonials.', 'pixelovely-simple-testimonials' ); ?>
 		</p>
 		
 		<?php
@@ -353,7 +354,7 @@ class PIXELovely_Testimonials_Widget extends WP_Widget {
 			displayRandomPIXELovelyTestimonials($num_display, $length);
 			
 			if (strlen($readmore) > 2) {
-				echo "<span class='readmore'><a href='$readmore'>Read more</a></a>";	
+				echo "<span class='readmore'><a href='$readmore'>".__( 'Read more', 'pixelovely-simple-testimonials' )."</a></span>";	
 			}
 			
 			echo $after_widget;
@@ -389,4 +390,10 @@ function determineIfValidNumberOfPIXELovelyTestimonials($number) {
 add_action( 'widgets_init', 'custom_testi_register' );
 add_shortcode('testimonial','create_pixelovely_testimonial_shortcode');
 
+
+function pixelovely_simple_testimonials_init() {
+	$plugin_dir = basename(dirname(__FILE__)). '/languages/';
+	load_plugin_textdomain( 'pixelovely-simple-testimonials', false, $plugin_dir );
+}
+add_action('plugins_loaded', 'pixelovely_simple_testimonials_init');
 ?>
